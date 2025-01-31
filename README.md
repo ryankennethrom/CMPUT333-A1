@@ -1,5 +1,6 @@
 # CMPUT333-A1
 
-# Collaborators
+# Resources Used
 
 * ChatGPT
+* TAs
