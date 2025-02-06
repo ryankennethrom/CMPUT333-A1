@@ -6,6 +6,11 @@ def generate_lots_keypair():
     # Use a set to store previously generated private key values for uniqueness check
     seen_private_keys = set()
 
+    priv_zero_keys = []
+    priv_one_keys = []
+
+    pub_zero_keys = []
+    pub_one_keys = []
     with open("private_key.lots", "wb") as priv_file, open("public_key.lots", "wb") as pub_file:
         for _ in range(512):
             while True:
@@ -26,13 +31,23 @@ def generate_lots_keypair():
             A_i = hashlib.sha512(X_i).digest()
             B_i = hashlib.sha512(Y_i).digest()
 
-            # Write the private key pair (X_i, Y_i) as raw bytes
-            priv_file.write(X_i)
-            priv_file.write(Y_i)
+            priv_zero_keys.append(X_i)
+            priv_one_keys.append(Y_i)
 
-            # Write the public key pair (A_i, B_i) as raw bytes
-            pub_file.write(A_i)
-            pub_file.write(B_i)
+            pub_zero_keys.append(A_i)
+            pub_one_keys.append(B_i)
+        
+        for i in range(len(priv_zero_keys)):
+            priv_file.write(priv_zero_keys[i])
+
+        for i in range(len(priv_one_keys)):
+            priv_file.write(priv_one_keys[i])
+
+        for i in range(len(pub_zero_keys)):
+            pub_file.write(pub_zero_keys[i])
+
+        for i in range(len(pub_one_keys)):
+            pub_file.write(pub_one_keys[i])
 
     print("New unique Lamport OTS key pair generated.")
 

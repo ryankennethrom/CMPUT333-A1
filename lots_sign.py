@@ -8,27 +8,23 @@ NUM_KEYS = 512  # SHA-512
 
 def read_private_key(filename):
 
-    with open(filename, "rb") as file:
-        private_key_data = file.read()
+    with open(filename, "rb") as priv_file:
+        zero_keys = []
+        one_keys = []
 
-    expected_size = NUM_KEYS * 2 * KEY_SIZE
-
-    zero_keys = []
-    one_keys = []
-
-
-    for i in range(NUM_KEYS):
-        start_index = i * KEY_SIZE
-        end_index = start_index + KEY_SIZE
-        key_block = private_key_data[start_index:end_index]
-        zero_keys.append(key_block)
-
-
-    for i in range(NUM_KEYS):
-        start_index = (NUM_KEYS + i) * KEY_SIZE
-        end_index = start_index + KEY_SIZE
-        key_block = private_key_data[start_index:end_index]
-        one_keys.append(key_block)
+        for i in range(NUM_KEYS):
+            # Read 128 bytes (64 bytes for A_i and 64 bytes for B_i)
+            chunk = priv_file.read(64)
+            
+            # Split into two 64-byte parts
+            zero_keys.append(chunk)
+        
+        for i in range(NUM_KEYS):
+            # Read 128 bytes (64 bytes for A_i and 64 bytes for B_i)
+            chunk = priv_file.read(64)
+            
+            # Split into two 64-byte parts
+            one_keys.append(chunk)
 
     return zero_keys, one_keys
 

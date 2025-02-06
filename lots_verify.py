@@ -1,9 +1,35 @@
 import hashlib
 import sys
 
+NUM_KEYS = 512
+
+def parse_lots_key(filename):
+
+    with open(filename, "rb") as priv_file:
+        zero_keys = []
+        one_keys = []
+
+        for i in range(NUM_KEYS):
+            # Read 128 bytes (64 bytes for A_i and 64 bytes for B_i)
+            chunk = priv_file.read(64)
+            
+            # Split into two 64-byte parts
+            zero_keys.append(chunk)
+        
+        for i in range(NUM_KEYS):
+            # Read 128 bytes (64 bytes for A_i and 64 bytes for B_i)
+            chunk = priv_file.read(64)
+            
+            # Split into two 64-byte parts
+            one_keys.append(chunk)
+
+    return zero_keys, one_keys
 
 def verify(message_fname, signature_fname, public_key_fname):
-    with open(signature_fname, "rb") as sig_file, open(public_key_fname, "rb") as pub_file, open(message_fname, "rb") as msg_file:
+
+    pub_list = parse_lots_key(public_key_fname)
+
+    with open(signature_fname, "rb") as sig_file, open(message_fname, "rb") as msg_file:
         
         signature_list = []
         while True:
@@ -12,21 +38,8 @@ def verify(message_fname, signature_fname, public_key_fname):
                 break
             signature_list.append(bit_sig)
         
-        pub_list = [[],[]]
-        while True:
-            # Read 128 bytes (64 bytes for A_i and 64 bytes for B_i)
-            chunk = pub_file.read(128)
-            if not chunk:
-                break  # Stop when the file ends
-            
-            # Split into two 64-byte parts
-            A_i = chunk[:64]
-            pub_list[0].append(A_i)
-            B_i = chunk[64:]
-            pub_list[1].append(B_i)
-        
         msg_file_raw = hash_file_sha512_raw(message_file)
-        
+
         msg_list = []
 
         for byte_index, byte in enumerate(msg_file_raw):
@@ -35,7 +48,7 @@ def verify(message_fname, signature_fname, public_key_fname):
                 msg_list.append(bit)
         
         for index, bit in enumerate(msg_list):
-            if pub_list[bit][index] != hashlib.sha512(signature[index]).digest():
+            if pub_list[bit][index] != hashlib.sha512(signature_list[index]).digest():
                 print("INVALID")
                 return
         print("VALID")
