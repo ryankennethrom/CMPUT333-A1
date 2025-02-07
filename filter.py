@@ -7,7 +7,7 @@ def filter_13_letter_words(input_file, output_file):
 
 # Specify input and output files
 input_file = 'words.txt'
-output_file = 'word13.txt'
+output_file = 'words13.txt'
 
 # Run the function
 filter_13_letter_words(input_file, output_file)
