@@ -1,3 +1,8 @@
 private_key*
 public_key*
 *test*
+sig*
+m1.text
+m2.text
+m3.text
+message.txt
